@@ -62,4 +62,4 @@ out/
 .vscode/
 
 ### Other ###
-*.db
+zaim.db*
