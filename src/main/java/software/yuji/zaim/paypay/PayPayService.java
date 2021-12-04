@@ -78,7 +78,7 @@ public final class PayPayService implements PaymentService {
         }
 
         public Payment toPayment(Genre genre) {
-            return new Payment(dateTime, message, amount, genre);
+            return new Payment(id, dateTime, message, amount, genre);
         }
     }
 }
