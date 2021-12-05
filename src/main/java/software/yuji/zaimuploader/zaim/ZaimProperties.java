@@ -1,4 +1,4 @@
-package software.yuji.zaimuploader.api;
+package software.yuji.zaimuploader.zaim;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;

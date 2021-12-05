@@ -1,4 +1,4 @@
-package software.yuji.zaimuploader.api;
+package software.yuji.zaimuploader.zaim;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
