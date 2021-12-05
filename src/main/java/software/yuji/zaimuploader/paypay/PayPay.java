@@ -6,9 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class PayPayEntity {
+public class PayPay {
 
-    protected PayPayEntity() {
+    protected PayPay() {
     }
 
     @Id
