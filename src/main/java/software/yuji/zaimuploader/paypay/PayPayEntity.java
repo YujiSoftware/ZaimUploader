@@ -1,10 +1,9 @@
-package software.yuji.zaim.paypay;
-
-import javax.persistence.Id;
+package software.yuji.zaimuploader.paypay;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class PayPayEntity {

@@ -1,10 +1,10 @@
-package software.yuji.zaim.paypay;
+package software.yuji.zaimuploader.paypay;
 
 import org.springframework.stereotype.Service;
-import software.yuji.zaim.Payment;
-import software.yuji.zaim.PaymentService;
-import software.yuji.zaim.genre.Genre;
-import software.yuji.zaim.genre.GenreRepository;
+import software.yuji.zaimuploader.Payment;
+import software.yuji.zaimuploader.PaymentService;
+import software.yuji.zaimuploader.genre.Genre;
+import software.yuji.zaimuploader.genre.GenreRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;

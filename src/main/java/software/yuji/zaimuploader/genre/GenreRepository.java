@@ -1,4 +1,4 @@
-package software.yuji.zaim.genre;
+package software.yuji.zaimuploader.genre;
 
 import org.springframework.data.repository.CrudRepository;
 

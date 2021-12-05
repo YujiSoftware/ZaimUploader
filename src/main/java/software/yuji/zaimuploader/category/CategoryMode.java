@@ -1,4 +1,4 @@
-package software.yuji.zaim.category;
+package software.yuji.zaimuploader.category;
 
 public enum CategoryMode {
     INCOME, PAYMENT

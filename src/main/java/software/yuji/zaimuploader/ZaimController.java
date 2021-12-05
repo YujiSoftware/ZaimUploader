@@ -1,4 +1,4 @@
-package software.yuji.zaim;
+package software.yuji.zaimuploader;
 
 import oauth.signpost.exception.OAuthException;
 import org.springframework.http.HttpStatus;
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.yuji.zaim.category.Category;
-import software.yuji.zaim.category.CategoryMode;
-import software.yuji.zaim.category.CategoryService;
-import software.yuji.zaim.genre.GenreService;
-import software.yuji.zaim.paypay.PayPayService;
+import software.yuji.zaimuploader.category.Category;
+import software.yuji.zaimuploader.category.CategoryMode;
+import software.yuji.zaimuploader.category.CategoryService;
+import software.yuji.zaimuploader.genre.GenreService;
+import software.yuji.zaimuploader.paypay.PayPayService;
 
 import java.io.IOException;
 import java.io.InputStream;

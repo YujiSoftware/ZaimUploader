@@ -1,4 +1,4 @@
-package software.yuji.zaim.api;
+package software.yuji.zaimuploader.api;
 
 public class NameValuePair implements org.apache.http.NameValuePair {
     private final String name;

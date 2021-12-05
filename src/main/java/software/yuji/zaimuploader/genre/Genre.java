@@ -1,6 +1,6 @@
-package software.yuji.zaim.genre;
+package software.yuji.zaimuploader.genre;
 
-import software.yuji.zaim.category.Category;
+import software.yuji.zaimuploader.category.Category;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

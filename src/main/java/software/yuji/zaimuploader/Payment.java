@@ -1,6 +1,6 @@
-package software.yuji.zaim;
+package software.yuji.zaimuploader;
 
-import software.yuji.zaim.genre.Genre;
+import software.yuji.zaimuploader.genre.Genre;
 
 import java.time.LocalDateTime;
 

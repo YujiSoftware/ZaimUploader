@@ -1,4 +1,4 @@
-package software.yuji.zaim;
+package software.yuji.zaimuploader;
 
 import java.io.IOException;
 import java.io.InputStream;

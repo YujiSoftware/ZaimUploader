@@ -1,4 +1,4 @@
-package software.yuji.zaim.paypay;
+package software.yuji.zaimuploader.paypay;
 
 import org.springframework.data.repository.CrudRepository;
 

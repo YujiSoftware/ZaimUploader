@@ -1,9 +1,9 @@
-package software.yuji.zaim.category;
+package software.yuji.zaimuploader.category;
 
 import oauth.signpost.exception.OAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.yuji.zaim.api.Zaim;
+import software.yuji.zaimuploader.api.Zaim;
 
 import java.io.IOException;
 import java.util.ArrayList;
