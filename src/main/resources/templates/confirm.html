@@ -33,7 +33,9 @@
                     </td>
                     <td th:text="${#temporals.format(payment.dateTime, 'yyyy/MM/dd HH:mm:ss')}">2021/01/01 23:59:59</td>
                     <td th:text="${payment.message}">松弁ネットに支払い</td>
-                    <td th:text="${payment.amount}">640</td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')}">
+                        640
+                    </td>
                     <td>
                         <select class="form-select" id="genre" th:field="*{payments[__${stat.index}__].genreId}">
                             <optgroup th:each="category : ${categories}" th:label="${category.name}" label="食費">
