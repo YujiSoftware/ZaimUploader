@@ -2,24 +2,28 @@ package software.yuji.zaimuploader.genre;
 
 import oauth.signpost.exception.OAuthException;
 import org.springframework.stereotype.Service;
+import software.yuji.zaimuploader.PaymentServiceId;
 import software.yuji.zaimuploader.category.Category;
 import software.yuji.zaimuploader.zaim.Zaim;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GenreService {
 
     private final Zaim zaim;
 
-    private final GenreRepository repository;
+    private final GenreRepository genreRepository;
 
-    public GenreService(Zaim zaim, GenreRepository repository) {
+    private final DefaultGenreRepository defaultGenreRepository;
+
+    public GenreService(Zaim zaim, GenreRepository genreRepository, DefaultGenreRepository defaultGenreRepository) {
         this.zaim = zaim;
-        this.repository = repository;
+        this.genreRepository = genreRepository;
+        this.defaultGenreRepository = defaultGenreRepository;
     }
 
     public void init() throws OAuthException, IOException {
@@ -39,16 +43,11 @@ public class GenreService {
             }
         }
 
-        repository.saveAll(saveEntities);
-        repository.deleteAll(deleteEntities);
+        genreRepository.saveAll(saveEntities);
+        genreRepository.deleteAll(deleteEntities);
     }
 
-    public List<Genre> loadAll() {
-        List<Genre> list = new ArrayList<>();
-        repository.findAll().forEach(list::add);
-
-        list.sort(Comparator.comparingInt(Genre::getSort));
-
-        return list;
+    public Optional<Genre> loadDefault(PaymentServiceId id, String message) {
+        return defaultGenreRepository.findById(new DefaultGenrePk(id, message)).map(DefaultGenre::getGenre);
     }
 }

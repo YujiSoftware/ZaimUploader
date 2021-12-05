@@ -1,7 +1,5 @@
 package software.yuji.zaimuploader;
 
-import software.yuji.zaimuploader.genre.Genre;
-
 import java.time.LocalDateTime;
 
 public final class Payment {
@@ -9,14 +7,15 @@ public final class Payment {
     private final LocalDateTime dateTime;
     private final String message;
     private final int amount;
-    private final Genre genre;
+    private Integer genreId;
+    private boolean accept = true;
 
-    public Payment(long id, LocalDateTime dateTime, String message, int amount, Genre genre) {
+    public Payment(long id, LocalDateTime dateTime, String message, int amount, Integer genreId) {
         this.id = id;
         this.dateTime = dateTime;
         this.message = message;
         this.amount = amount;
-        this.genre = genre;
+        this.genreId = genreId;
     }
 
     public long getId() {
@@ -35,7 +34,19 @@ public final class Payment {
         return amount;
     }
 
-    public Genre getGenre() {
-        return genre;
+    public Integer getGenreId() {
+        return genreId;
+    }
+
+    public void setGenreId(Integer genreId) {
+        this.genreId = genreId;
+    }
+
+    public boolean isAccept() {
+        return accept;
+    }
+
+    public void setAccept(boolean accept) {
+        this.accept = accept;
     }
 }

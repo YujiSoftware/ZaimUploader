@@ -15,7 +15,6 @@ import software.yuji.zaimuploader.paypay.PayPayService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Controller
@@ -43,39 +42,6 @@ public class ZaimController {
 
         public void setPayments(Payment[] payments) {
             this.payments = payments;
-        }
-    }
-
-    private static class CommitForm {
-        private Map<String, Commit> commits;
-
-        public Map<String, Commit> getCommits() {
-            return commits;
-        }
-
-        public void setCommits(Map<String, Commit> commits) {
-            this.commits = commits;
-        }
-
-        public static class Commit {
-            private int genreId;
-            private boolean accept = true;
-
-            public int getGenreId() {
-                return genreId;
-            }
-
-            public void setGenreId(int genreId) {
-                this.genreId = genreId;
-            }
-
-            public boolean isAccept() {
-                return accept;
-            }
-
-            public void setAccept(boolean accept) {
-                this.accept = accept;
-            }
         }
     }
 
@@ -123,16 +89,16 @@ public class ZaimController {
 
             List<Category> categories = categoryService.findByMode(CategoryMode.PAYMENT);
             model.addAttribute("categories", categories);
-            model.addAttribute("commitForm", new CommitForm());
 
             return "confirm";
         }
     }
 
     @PostMapping("/commit")
-    public String commit(@ModelAttribute CommitForm form, Model model) {
-        for (Map.Entry<String, CommitForm.Commit> entry : form.getCommits().entrySet()) {
-            System.out.println(String.format("%s, %b, %d", entry.getKey(), entry.getValue().isAccept(), entry.getValue().genreId));
+    public String commit(Model model) {
+        UploadForm uploadForm = (UploadForm) model.getAttribute(SESSION_ATTRIBUTES_UPLOAD_FORM);
+        for (Payment payment : uploadForm.getPayments()) {
+            System.out.printf("%s, %b, %d%n", payment.getMessage(), payment.isAccept(), payment.getGenreId());
         }
 
         return "index";

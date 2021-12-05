@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="container">
-    <form action="/commit" method="post" th:object="${commitForm}">
+    <form action="/commit" method="post" th:object="${uploadForm}">
         <table class="table">
             <thead>
             <tr>
@@ -24,22 +24,22 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="payment : ${uploadForm.payments}">
+            <th:block th:each="payment, stat : ${uploadForm.payments}">
                 <tr>
                     <td>
                         <input class="form-check-input" type="checkbox" th:value="${payment.id}"
-                               th:field="*{commits[__${payment.id}__].accept}"
+                               th:field="*{payments[__${stat.index}__].accept}"
                                checked/>
                     </td>
                     <td th:text="${#temporals.format(payment.dateTime, 'yyyy/MM/dd HH:mm:ss')}">2021/01/01 23:59:59</td>
                     <td th:text="${payment.message}">松弁ネットに支払い</td>
                     <td th:text="${payment.amount}">640</td>
                     <td>
-                        <select class="form-select" id="genre"
-                                th:field="*{commits[__${payment.id}__].genreId}">
+                        <select class="form-select" id="genre" th:field="*{payments[__${stat.index}__].genreId}">
                             <optgroup th:each="category : ${categories}" th:label="${category.name}" label="食費">
                                 <option th:each="genre : ${category.genres}" th:value="${genre.id}"
-                                        th:text="${genre.name}">
+                                        th:text="${genre.name}"
+                                        th:selected="${genre.id} == *{payments[__${stat.index}__].genreId}">
                                     飲食品
                                 </option>
                             </optgroup>

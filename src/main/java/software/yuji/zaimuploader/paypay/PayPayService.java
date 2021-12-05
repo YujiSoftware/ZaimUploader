@@ -3,8 +3,10 @@ package software.yuji.zaimuploader.paypay;
 import org.springframework.stereotype.Service;
 import software.yuji.zaimuploader.Payment;
 import software.yuji.zaimuploader.PaymentService;
+import software.yuji.zaimuploader.PaymentServiceId;
 import software.yuji.zaimuploader.genre.Genre;
 import software.yuji.zaimuploader.genre.GenreRepository;
+import software.yuji.zaimuploader.genre.GenreService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,13 +23,18 @@ import java.util.Map;
 @Service
 public final class PayPayService implements PaymentService {
 
+    private static final PaymentServiceId PAYMENT_SERVICE_ID = PaymentServiceId.PayPay;
+
     private final PayPayRepository payPayRepository;
 
     private final GenreRepository genreRepository;
 
-    public PayPayService(PayPayRepository payPayRepository, GenreRepository genreRepository) {
+    private final GenreService genreService;
+
+    public PayPayService(PayPayRepository payPayRepository, GenreRepository genreRepository, GenreService genreService) {
         this.payPayRepository = payPayRepository;
         this.genreRepository = genreRepository;
+        this.genreService = genreService;
     }
 
     @Override
@@ -49,7 +56,12 @@ public final class PayPayService implements PaymentService {
                 continue;
             }
 
-            list.add(record.toPayment(map.get(10104)));
+            Integer genreId =
+                    genreService.loadDefault(PAYMENT_SERVICE_ID, record.message)
+                            .map(Genre::getId)
+                            .orElse(null);
+
+            list.add(record.toPayment(genreId));
         }
 
         return list.toArray(new Payment[0]);
@@ -77,8 +89,8 @@ public final class PayPayService implements PaymentService {
             );
         }
 
-        public Payment toPayment(Genre genre) {
-            return new Payment(id, dateTime, message, amount, genre);
+        public Payment toPayment(Integer genreId) {
+            return new Payment(id, dateTime, message, amount, genreId);
         }
     }
 }
