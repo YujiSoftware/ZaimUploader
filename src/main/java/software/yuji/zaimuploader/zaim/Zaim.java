@@ -31,6 +31,12 @@ public class Zaim {
         this.client = HttpClientBuilder.create().build();
     }
 
+    public ZaimAccount[] getAccount() throws IOException, OAuthException {
+        HttpResponse response = get("https://api.zaim.net/v2/home/account?mapping=1");
+
+        return objectMapper.readValue(response.getEntity().getContent(), ZaimAccounts.class).getAccounts();
+    }
+
     public ZaimCategory[] getCategory() throws IOException, OAuthException {
         HttpResponse response = get("https://api.zaim.net/v2/home/category?mapping=1");
 
@@ -55,6 +61,108 @@ public class Zaim {
         }
 
         return response;
+    }
+
+    public static class ZaimAccounts {
+        private ZaimAccount[] accounts;
+        private String requested;
+
+        public ZaimAccount[] getAccounts() {
+            return accounts;
+        }
+
+        public void setAccounts(ZaimAccount[] accounts) {
+            this.accounts = accounts;
+        }
+
+        public String getRequested() {
+            return requested;
+        }
+
+        public void setRequested(String requested) {
+            this.requested = requested;
+        }
+    }
+
+    public static class ZaimAccount {
+        private int id;
+        private String name;
+        private String mode;
+        private int sort;
+        private int active;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime modified;
+
+        @JsonProperty("parent_account_id")
+        private int parentAccountId;
+
+        @JsonProperty("local_id")
+        private int localId;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public void setMode(String mode) {
+            this.mode = mode;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getSort() {
+            return sort;
+        }
+
+        public void setSort(int sort) {
+            this.sort = sort;
+        }
+
+        public int getActive() {
+            return active;
+        }
+
+        public void setActive(int active) {
+            this.active = active;
+        }
+
+        public LocalDateTime getModified() {
+            return modified;
+        }
+
+        public void setModified(LocalDateTime modified) {
+            this.modified = modified;
+        }
+
+        public int getParentAccountId() {
+            return parentAccountId;
+        }
+
+        public void setParentAccountId(int parentAccountId) {
+            this.parentAccountId = parentAccountId;
+        }
+
+        public int getLocalId() {
+            return localId;
+        }
+
+        public void setLocalId(int localId) {
+            this.localId = localId;
+        }
     }
 
     public static class ZaimCategories {
