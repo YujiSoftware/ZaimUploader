@@ -8,7 +8,6 @@ public final class Payment {
     private final String message;
     private final int amount;
     private Integer genreId;
-    private boolean accept = true;
 
     public Payment(long id, LocalDateTime dateTime, String message, int amount, Integer genreId) {
         this.id = id;
@@ -40,13 +39,5 @@ public final class Payment {
 
     public void setGenreId(Integer genreId) {
         this.genreId = genreId;
-    }
-
-    public boolean isAccept() {
-        return accept;
-    }
-
-    public void setAccept(boolean accept) {
-        this.accept = accept;
     }
 }

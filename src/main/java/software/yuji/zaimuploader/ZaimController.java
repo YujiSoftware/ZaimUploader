@@ -58,7 +58,7 @@ public class ZaimController {
     }
 
     @ModelAttribute(SESSION_ATTRIBUTES_UPLOAD_FORM)
-    public UploadForm setupForm() {
+    public UploadForm setupUploadForm() {
         return new UploadForm();
     }
 
@@ -95,10 +95,9 @@ public class ZaimController {
     }
 
     @PostMapping("/commit")
-    public String commit(Model model) {
-        UploadForm uploadForm = (UploadForm) model.getAttribute(SESSION_ATTRIBUTES_UPLOAD_FORM);
-        for (Payment payment : uploadForm.getPayments()) {
-            System.out.printf("%s, %b, %d%n", payment.getMessage(), payment.isAccept(), payment.getGenreId());
+    public String commit(@ModelAttribute UploadForm form) {
+        for (Payment payment : form.getPayments()) {
+            System.out.printf("%s, %d%n", payment.getMessage(), payment.getGenreId());
         }
 
         return "index";

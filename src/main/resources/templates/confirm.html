@@ -16,7 +16,6 @@
         <table class="table">
             <thead>
             <tr>
-                <th></th>
                 <th>日付</th>
                 <th>メッセージ</th>
                 <th>金額</th>
@@ -24,13 +23,8 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="payment, stat : ${uploadForm.payments}">
+            <th:block th:each="payment, stat : *{payments}">
                 <tr>
-                    <td>
-                        <input class="form-check-input" type="checkbox" th:value="${payment.id}"
-                               th:field="*{payments[__${stat.index}__].accept}"
-                               checked/>
-                    </td>
                     <td th:text="${#temporals.format(payment.dateTime, 'yyyy/MM/dd HH:mm:ss')}">2021/01/01 23:59:59</td>
                     <td th:text="${payment.message}">松弁ネットに支払い</td>
                     <td class="text-end" th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')}">
@@ -38,6 +32,7 @@
                     </td>
                     <td>
                         <select class="form-select" id="genre" th:field="*{payments[__${stat.index}__].genreId}">
+                            <option th:value="${null}">（登録しない）</option>
                             <optgroup th:each="category : ${categories}" th:label="${category.name}" label="食費">
                                 <option th:each="genre : ${category.genres}" th:value="${genre.id}"
                                         th:text="${genre.name}"
