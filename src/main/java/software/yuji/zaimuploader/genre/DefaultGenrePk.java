@@ -1,34 +1,33 @@
 package software.yuji.zaimuploader.genre;
 
-import software.yuji.zaimuploader.PaymentServiceId;
+import software.yuji.zaimuploader.account.Account;
 
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class DefaultGenrePk implements Serializable {
-    @Enumerated(EnumType.ORDINAL)
-    private PaymentServiceId id;
+    @ManyToOne
+    private Account account;
 
     private String message;
 
     protected DefaultGenrePk() {
     }
 
-    public DefaultGenrePk(PaymentServiceId id, String message) {
-        this.id = id;
+    public DefaultGenrePk(Account account, String message) {
+        this.account = account;
         this.message = message;
     }
 
-    public PaymentServiceId getId() {
-        return id;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setId(PaymentServiceId id) {
-        this.id = id;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getMessage() {
@@ -44,11 +43,11 @@ public class DefaultGenrePk implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultGenrePk that = (DefaultGenrePk) o;
-        return id == that.id && Objects.equals(message, that.message);
+        return account == that.account && Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message);
+        return Objects.hash(account, message);
     }
 }

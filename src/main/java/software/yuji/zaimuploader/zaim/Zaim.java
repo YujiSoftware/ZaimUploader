@@ -7,14 +7,20 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
+import software.yuji.zaimuploader.Payment;
+import software.yuji.zaimuploader.account.Account;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class Zaim {
@@ -48,6 +54,29 @@ public class Zaim {
         HttpResponse response = get("https://api.zaim.net/v2/home/genre?mapping=1");
 
         return objectMapper.readValue(response.getEntity().getContent(), ZaimGenres.class).getGenres();
+    }
+
+    public ZaimPaymentResult sendPayment(Account account, Payment payment) throws IOException, OAuthException {
+        List<NameValuePair> list = List.of(
+                new NameValuePair("mapping", 1),
+                new NameValuePair("category_id", payment.getGenre().getCategory().getId()),
+                new NameValuePair("genre_id", payment.getGenreId()),
+                new NameValuePair("amount", payment.getAmount()),
+                new NameValuePair("date", payment.getDateTime()),
+                new NameValuePair("from_account_id", account.getId()),
+                new NameValuePair("place", payment.getPlace())
+        );
+        HttpPost request = new HttpPost("https://api.zaim.net/v2/home/money/payment");
+        request.setEntity(new UrlEncodedFormEntity(list, StandardCharsets.UTF_8));
+        consumer.sign(request);
+
+        HttpResponse response = client.execute(request);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            String responseBody = EntityUtils.toString(response.getEntity());
+            throw new IOException("" + response.getStatusLine().toString() + ": " + responseBody);
+        }
+
+        return objectMapper.readValue(response.getEntity().getContent(), ZaimPaymentResult.class);
     }
 
     private HttpResponse get(String url) throws IOException, OAuthException {
@@ -379,4 +408,58 @@ public class Zaim {
             this.localId = localId;
         }
     }
+
+    public static class ZaimPaymentResult {
+        private String stamps;
+        private String[] banners;
+        private ZaimMoney money;
+
+        public String getStamps() {
+            return stamps;
+        }
+
+        public void setStamps(String stamps) {
+            this.stamps = stamps;
+        }
+
+        public String[] getBanners() {
+            return banners;
+        }
+
+        public void setBanners(String[] banners) {
+            this.banners = banners;
+        }
+
+        public ZaimMoney getMoney() {
+            return money;
+        }
+
+        public void setMoney(ZaimMoney money) {
+            this.money = money;
+        }
+    }
+
+    public static class ZaimMoney {
+        private long id;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime modified;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public LocalDateTime getModified() {
+            return modified;
+        }
+
+        public void setModified(LocalDateTime modified) {
+            this.modified = modified;
+        }
+    }
 }
+

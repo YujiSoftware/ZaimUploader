@@ -2,14 +2,12 @@ package software.yuji.zaimuploader.genre;
 
 import oauth.signpost.exception.OAuthException;
 import org.springframework.stereotype.Service;
-import software.yuji.zaimuploader.PaymentServiceId;
+import software.yuji.zaimuploader.account.Account;
 import software.yuji.zaimuploader.category.Category;
 import software.yuji.zaimuploader.zaim.Zaim;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GenreService {
@@ -47,7 +45,15 @@ public class GenreService {
         genreRepository.deleteAll(deleteEntities);
     }
 
-    public Optional<Genre> loadDefault(PaymentServiceId id, String message) {
-        return defaultGenreRepository.findById(new DefaultGenrePk(id, message)).map(DefaultGenre::getGenre);
+    public Map<Genre, Category> getCategoryMapping() {
+        Map<Genre, Category> mapping = new HashMap<>();
+        for (Genre genre : genreRepository.findAll()) {
+            mapping.put(genre, genre.getCategory());
+        }
+        return mapping;
+    }
+
+    public Optional<Genre> loadDefault(Account account, String message) {
+        return defaultGenreRepository.findById(new DefaultGenrePk(account, message)).map(DefaultGenre::getGenre);
     }
 }

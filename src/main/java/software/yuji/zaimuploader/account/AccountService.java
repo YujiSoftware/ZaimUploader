@@ -1,18 +1,19 @@
 package software.yuji.zaimuploader.account;
 
 import oauth.signpost.exception.OAuthException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.yuji.zaimuploader.zaim.Zaim;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AccountService {
 
-    @Autowired
+    private static final String PAY_PAY = "PayPay";
+
     private final Zaim zaim;
 
     private final AccountRepository repository;
@@ -40,5 +41,9 @@ public class AccountService {
 
         repository.saveAll(saveEntities);
         repository.deleteAll(deleteEntities);
+    }
+
+    public Account getPayPay() {
+        return Objects.requireNonNull(repository.findByName(PAY_PAY));
     }
 }

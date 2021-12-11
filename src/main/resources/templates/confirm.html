@@ -26,7 +26,7 @@
             <th:block th:each="payment, stat : *{payments}">
                 <tr>
                     <td th:text="${#temporals.format(payment.dateTime, 'yyyy/MM/dd HH:mm:ss')}">2021/01/01 23:59:59</td>
-                    <td th:text="${payment.message}">松弁ネットに支払い</td>
+                    <td th:text="${payment.place}">松弁ネットに支払い</td>
                     <td class="text-end" th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')}">
                         640
                     </td>

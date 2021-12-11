@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import software.yuji.zaimuploader.account.AccountService;
 import software.yuji.zaimuploader.category.Category;
 import software.yuji.zaimuploader.category.CategoryMode;
 import software.yuji.zaimuploader.category.CategoryService;
@@ -24,9 +26,19 @@ public class ZaimController {
     private static final String SESSION_ATTRIBUTES_UPLOAD_FORM = "uploadForm";
 
     public static class UploadForm {
+        private String type;
+
         private UUID uuid;
 
         private Payment[] payments;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public UUID getUuid() {
             return uuid;
@@ -47,12 +59,15 @@ public class ZaimController {
 
     private final PayPayService payPay;
 
+    private final AccountService accountService;
+
     private final CategoryService categoryService;
 
     private final GenreService genreService;
 
-    public ZaimController(PayPayService payPay, CategoryService categoryService, GenreService genreService) {
+    public ZaimController(PayPayService payPay, AccountService accountService, CategoryService categoryService, GenreService genreService) {
         this.payPay = payPay;
+        this.accountService = accountService;
         this.categoryService = categoryService;
         this.genreService = genreService;
     }
@@ -62,9 +77,15 @@ public class ZaimController {
         return new UploadForm();
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
     @GetMapping("/init")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public String init() throws OAuthException, IOException {
+        accountService.init();
         categoryService.init();
         genreService.init();
 
@@ -75,15 +96,13 @@ public class ZaimController {
     public String upload(
             @RequestParam("csv") MultipartFile multipartFile,
             @RequestParam(value = "type") String type, Model model) throws IOException {
-        PaymentService service = switch (type) {
-            case "paypay" -> payPay;
-            default -> null;
-        };
+        PaymentService service = getPaymentService(type);
 
         try (InputStream stream = multipartFile.getInputStream()) {
             Payment[] payments = service.readCSV(stream);
 
             UploadForm uploadForm = (UploadForm) model.getAttribute(SESSION_ATTRIBUTES_UPLOAD_FORM);
+            uploadForm.setType(type);
             uploadForm.setUuid(UUID.randomUUID());
             uploadForm.setPayments(payments);
 
@@ -95,11 +114,26 @@ public class ZaimController {
     }
 
     @PostMapping("/commit")
-    public String commit(@ModelAttribute UploadForm form) {
+    public String commit(@ModelAttribute UploadForm form, RedirectAttributes redirectAttributes) throws OAuthException, IOException {
         for (Payment payment : form.getPayments()) {
-            System.out.printf("%s, %d%n", payment.getMessage(), payment.getGenreId());
+            System.out.printf("%s, %d%n", payment.getPlace(), payment.getGenreId());
         }
 
-        return "index";
+        PaymentService service = getPaymentService(form.getType());
+
+        int send = service.send(form.getPayments());
+        redirectAttributes.addFlashAttribute(
+                "message",
+                String.format("%d 件のレコードを Zaim に登録しました。", send)
+        );
+
+        return "redirect:/";
+    }
+
+    private PaymentService getPaymentService(String type) {
+        return switch (type) {
+            case "paypay" -> payPay;
+            default -> null;
+        };
     }
 }

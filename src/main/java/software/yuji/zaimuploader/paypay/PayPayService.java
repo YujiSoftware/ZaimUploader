@@ -1,12 +1,15 @@
 package software.yuji.zaimuploader.paypay;
 
+import oauth.signpost.exception.OAuthException;
 import org.springframework.stereotype.Service;
 import software.yuji.zaimuploader.Payment;
 import software.yuji.zaimuploader.PaymentService;
-import software.yuji.zaimuploader.PaymentServiceId;
+import software.yuji.zaimuploader.account.Account;
+import software.yuji.zaimuploader.account.AccountService;
+import software.yuji.zaimuploader.category.Category;
 import software.yuji.zaimuploader.genre.Genre;
-import software.yuji.zaimuploader.genre.GenreRepository;
 import software.yuji.zaimuploader.genre.GenreService;
+import software.yuji.zaimuploader.zaim.Zaim;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,33 +19,31 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public final class PayPayService implements PaymentService {
 
-    private static final PaymentServiceId PAYMENT_SERVICE_ID = PaymentServiceId.PayPay;
-
     private final PayPayRepository payPayRepository;
 
-    private final GenreRepository genreRepository;
+    private final AccountService accountService;
 
     private final GenreService genreService;
 
-    public PayPayService(PayPayRepository payPayRepository, GenreRepository genreRepository, GenreService genreService) {
+    private final Zaim zaim;
+
+    public PayPayService(PayPayRepository payPayRepository, AccountService accountService, GenreService genreService, Zaim zaim) {
         this.payPayRepository = payPayRepository;
-        this.genreRepository = genreRepository;
+        this.accountService = accountService;
         this.genreService = genreService;
+        this.zaim = zaim;
     }
 
     @Override
     public Payment[] readCSV(InputStream stream) throws IOException {
-        Map<Integer, Genre> map = new HashMap<>();
-        for (Genre genre : genreRepository.findAll()) {
-            map.put(genre.getId(), genre);
-        }
+        Account payPay = accountService.getPayPay();
+        Map<Genre, Category> mapping = genreService.getCategoryMapping();
 
         String line;
         List<Payment> list = new ArrayList<>();
@@ -56,15 +57,44 @@ public final class PayPayService implements PaymentService {
                 continue;
             }
 
-            Integer genreId =
-                    genreService.loadDefault(PAYMENT_SERVICE_ID, record.message)
-                            .map(Genre::getId)
-                            .orElse(null);
+            // 例:
+            // record.message = 吉野家に支払い
+            // record.merchant = 秋葉原店
+            String message = record.message.replace("に支払い", "");
+            if (!record.merchant.isEmpty() && !message.equals(record.merchant)) {
+                message += " (" + record.merchant + ")";
+            }
+            Genre genre = genreService.loadDefault(payPay, record.message).orElse(null);
 
-            list.add(record.toPayment(genreId));
+            list.add(new Payment(record.id, record.dateTime, message, record.amount, genre, mapping));
         }
 
         return list.toArray(new Payment[0]);
+    }
+
+    @Override
+    public int send(Payment[] payments) throws OAuthException, IOException {
+        Account account = accountService.getPayPay();
+
+        int send = 0;
+        for (Payment payment : payments) {
+            if (payment.getGenre() == null) {
+                continue;
+            }
+
+            Zaim.ZaimPaymentResult result = zaim.sendPayment(account, payment);
+
+            PayPay payPay = new PayPay(
+                    payment.getId(),
+                    result.getMoney().getId(),
+                    result.getMoney().getModified()
+            );
+            payPayRepository.save(payPay);
+
+            send++;
+        }
+
+        return send;
     }
 
     public record PayPayRecord(
@@ -87,10 +117,6 @@ public final class PayPayService implements PaymentService {
                     LocalDateTime.parse(line[4], FORMATTER),
                     Integer.parseInt(line[5])
             );
-        }
-
-        public Payment toPayment(Integer genreId) {
-            return new Payment(id, dateTime, message, amount, genreId);
         }
     }
 }
