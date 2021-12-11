@@ -60,13 +60,13 @@ public final class PayPayService implements PaymentService {
             // 例:
             // record.message = 吉野家に支払い
             // record.merchant = 秋葉原店
-            String message = record.message.replace("に支払い", "");
-            if (!record.merchant.isEmpty() && !message.equals(record.merchant)) {
-                message += " (" + record.merchant + ")";
+            String place = record.message.replace("に支払い", "");
+            if (!record.merchant.isEmpty() && !place.equals(record.merchant)) {
+                place += " (" + record.merchant + ")";
             }
             Genre genre = genreService.loadDefault(payPay, record.message).orElse(null);
 
-            list.add(new Payment(record.id, record.dateTime, message, record.amount, genre, mapping));
+            list.add(new Payment(record.id, record.dateTime, record.message, place, record.amount, genre, mapping));
         }
 
         return list.toArray(new Payment[0]);
@@ -84,18 +84,25 @@ public final class PayPayService implements PaymentService {
 
             Zaim.ZaimPaymentResult result = zaim.sendPayment(account, payment);
 
-            PayPay payPay = new PayPay(
-                    payment.getId(),
-                    result.getMoney().getId(),
-                    result.getMoney().getModified()
-            );
-            payPayRepository.save(payPay);
+            save(account, payment, result);
 
             send++;
         }
 
         return send;
     }
+
+    private void save(Account account, Payment payment, Zaim.ZaimPaymentResult result) {
+        PayPay payPay = new PayPay(
+                payment.getId(),
+                result.getMoney().getId(),
+                result.getMoney().getModified()
+        );
+        payPayRepository.save(payPay);
+
+        genreService.saveDefault(account, payment.getMessage(), payment.getGenre());
+    }
+
 
     public record PayPayRecord(
             long id, String message, String merchant, String status, LocalDateTime dateTime, int amount

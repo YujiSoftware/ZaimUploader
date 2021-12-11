@@ -56,4 +56,8 @@ public class GenreService {
     public Optional<Genre> loadDefault(Account account, String message) {
         return defaultGenreRepository.findById(new DefaultGenrePk(account, message)).map(DefaultGenre::getGenre);
     }
+
+    public void saveDefault(Account account, String message, Genre genre) {
+        defaultGenreRepository.save(new DefaultGenre(new DefaultGenrePk(account, message), genre));
+    }
 }
