@@ -103,8 +103,7 @@ public final class PayPayService implements PaymentService {
         genreService.saveDefault(account, payment.getMessage(), payment.getGenre());
     }
 
-
-    public record PayPayRecord(
+    private record PayPayRecord(
             long id, String message, String merchant, String status, LocalDateTime dateTime, int amount
     ) {
         // ex. 2021年4月25日 18時09分
