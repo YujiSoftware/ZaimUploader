@@ -14,6 +14,8 @@ public class AccountService {
 
     private static final String PAY_PAY = "PayPay";
 
+    private static final String GOLD_POINT = "ヨドバシゴールドポイントカード・プラス";
+
     private final Zaim zaim;
 
     private final AccountRepository repository;
@@ -45,5 +47,9 @@ public class AccountService {
 
     public Account getPayPay() {
         return Objects.requireNonNull(repository.findByName(PAY_PAY));
+    }
+
+    public Account getGoldPoint() {
+        return Objects.requireNonNull(repository.findByName(GOLD_POINT));
     }
 }

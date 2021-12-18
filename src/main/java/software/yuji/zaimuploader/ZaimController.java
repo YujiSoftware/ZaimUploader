@@ -12,6 +12,7 @@ import software.yuji.zaimuploader.category.Category;
 import software.yuji.zaimuploader.category.CategoryMode;
 import software.yuji.zaimuploader.category.CategoryService;
 import software.yuji.zaimuploader.genre.GenreService;
+import software.yuji.zaimuploader.goldpoint.GoldPointService;
 import software.yuji.zaimuploader.paypay.PayPayService;
 
 import java.io.IOException;
@@ -59,14 +60,17 @@ public class ZaimController {
 
     private final PayPayService payPay;
 
+    private final GoldPointService goldPoint;
+
     private final AccountService accountService;
 
     private final CategoryService categoryService;
 
     private final GenreService genreService;
 
-    public ZaimController(PayPayService payPay, AccountService accountService, CategoryService categoryService, GenreService genreService) {
+    public ZaimController(PayPayService payPay, GoldPointService goldPoint, AccountService accountService, CategoryService categoryService, GenreService genreService) {
         this.payPay = payPay;
+        this.goldPoint = goldPoint;
         this.accountService = accountService;
         this.categoryService = categoryService;
         this.genreService = genreService;
@@ -133,6 +137,7 @@ public class ZaimController {
     private PaymentService getPaymentService(String type) {
         return switch (type) {
             case "paypay" -> payPay;
+            case "goldpoint" -> goldPoint;
             default -> null;
         };
     }
