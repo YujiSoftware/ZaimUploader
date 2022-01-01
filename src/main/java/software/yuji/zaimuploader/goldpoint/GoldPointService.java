@@ -65,7 +65,35 @@ public class GoldPointService implements PaymentService {
 
     @Override
     public int send(Payment[] payments) throws OAuthException, IOException {
-        return 0;
+        Account account = accountService.getGoldPoint();
+
+        int send = 0;
+        for (Payment payment : payments) {
+            if (payment.getGenre() == null) {
+                continue;
+            }
+
+            Zaim.ZaimPaymentResult result = zaim.sendPayment(account, payment);
+
+            save(account, payment, result);
+
+            send++;
+        }
+
+        return send;
+    }
+
+    private void save(Account account, Payment payment, Zaim.ZaimPaymentResult result) {
+        GoldPointRecord record = (GoldPointRecord) payment.getRecord();
+
+        GoldPoint goldPoint = new GoldPoint(
+                record.getPK(),
+                result.getMoney().getId(),
+                result.getMoney().getModified()
+        );
+        repository.save(goldPoint);
+
+        genreService.saveDefault(account, record.利用店名, payment.getGenre());
     }
 
     /**
