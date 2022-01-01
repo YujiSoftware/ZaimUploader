@@ -66,7 +66,7 @@ public final class PayPayService implements PaymentService {
             }
             Genre genre = genreService.loadDefault(payPay, record.message).orElse(null);
 
-            list.add(new Payment(record.id, record.dateTime, record.message, place, record.amount, genre, mapping));
+            list.add(new Payment(record, record.id, record.dateTime, place, record.amount, genre, mapping));
         }
 
         return list.toArray(new Payment[0]);
@@ -100,7 +100,8 @@ public final class PayPayService implements PaymentService {
         );
         payPayRepository.save(payPay);
 
-        genreService.saveDefault(account, payment.getMessage(), payment.getGenre());
+        PayPayRecord record = (PayPayRecord) payment.getRecord();
+        genreService.saveDefault(account, record.message, payment.getGenre());
     }
 
     private record PayPayRecord(

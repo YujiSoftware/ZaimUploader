@@ -57,7 +57,7 @@ public class GoldPointService implements PaymentService {
 
             Genre genre = genreService.loadDefault(goldPoint, record.利用店名).orElse(null);
 
-            list.add(new Payment(record.hashCode(), record.利用日, record.利用店名, record.利用店名, record.利用金額, genre, mapping));
+            list.add(new Payment(record, record.hashCode(), record.利用日, record.利用店名, record.利用金額, genre, mapping));
         }
 
         return list.toArray(new Payment[0]);

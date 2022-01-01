@@ -7,24 +7,28 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public final class Payment {
+    private final Object record;
     private final Map<Genre, Category> mapping;
     private final long id;
     private final LocalDateTime dateTime;
-    private final String message;
     private final String place;
     private final int amount;
 
     private Genre genre;
 
-    public Payment(long id, LocalDateTime dateTime, String message, String place, int amount, Genre genre, Map<Genre, Category> mapping) {
+    public Payment(Object record, long id, LocalDateTime dateTime, String place, int amount, Genre genre, Map<Genre, Category> mapping) {
+        this.record = record;
         this.mapping = mapping;
 
         this.id = id;
         this.dateTime = dateTime;
-        this.message = message;
         this.place = place;
         this.amount = amount;
         this.genre = genre;
+    }
+
+    public Object getRecord() {
+        return record;
     }
 
     public long getId() {
@@ -33,10 +37,6 @@ public final class Payment {
 
     public LocalDateTime getDateTime() {
         return dateTime;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public String getPlace() {
