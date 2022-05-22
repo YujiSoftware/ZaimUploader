@@ -105,13 +105,13 @@ public final class PayPayService implements PaymentService {
     }
 
     private record PayPayRecord(
-            long id, String message, String merchant, String status, LocalDateTime dateTime, int amount
+            long id, String message, String merchant, String status, LocalDateTime dateTime, String method, int amount
     ) {
         // ex. 2021年4月25日 18時09分
         private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("uuuu年M月d日 k時m分");
 
         public static PayPayRecord create(String[] line) {
-            if (line.length != 6) {
+            if (line.length != 7) {
                 // TODO: Exception を適切なものに変更
                 throw new java.lang.RuntimeException(String.format("Invalid line length. [length = %d]", line.length));
             }
@@ -122,7 +122,8 @@ public final class PayPayService implements PaymentService {
                     line[2],
                     line[3],
                     LocalDateTime.parse(line[4], FORMATTER),
-                    Integer.parseInt(line[5])
+                    line[5],
+                    -Integer.parseInt(line[6])
             );
         }
     }
