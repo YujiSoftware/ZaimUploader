@@ -53,6 +53,10 @@ public class GenreService {
         return mapping;
     }
 
+    public Genre load(String name) {
+        return genreRepository.findByName(name);
+    }
+
     public Optional<Genre> loadDefault(Account account, String message) {
         return defaultGenreRepository.findById(new DefaultGenrePk(account, message)).map(DefaultGenre::getGenre);
     }
