@@ -80,7 +80,7 @@ public final class SuicaService implements PaymentService {
                 genre = null;
             }
 
-            list.add(new Payment(record, record.hashCode(), record.月日.atYear(Year.now().getValue()).atStartOfDay(), place, -record.入金_利用額, genre, mapping));
+            list.add(new Payment(record, record.hashCode(), Year.now().atMonthDay(record.月日).atStartOfDay(), place, -record.入金_利用額, genre, mapping));
         }
 
         return list.toArray(new Payment[0]);
