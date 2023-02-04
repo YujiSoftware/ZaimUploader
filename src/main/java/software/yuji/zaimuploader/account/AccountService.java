@@ -16,6 +16,8 @@ public class AccountService {
 
     private static final String GOLD_POINT = "ヨドバシゴールドポイントカード・プラス";
 
+    private static final String POCKET_CARD = "ポケットカード";
+
     private final Zaim zaim;
 
     private final AccountRepository repository;
@@ -51,5 +53,9 @@ public class AccountService {
 
     public Account getGoldPoint() {
         return Objects.requireNonNull(repository.findByName(GOLD_POINT));
+    }
+
+    public Account getPocketCard() {
+        return Objects.requireNonNull(repository.findByName(POCKET_CARD));
     }
 }
